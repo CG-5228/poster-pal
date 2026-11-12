@@ -7,6 +7,7 @@ window.POSTERPAL_CONFIG = {
   maxSpots: 15,       // most spots one order can cover
   defaultSpots: 10,
   storeUrl: "",       // your Whop store page (optional)
+  trackerUrl: "",     // public address of the scan tracker dashboard (see tracker/README.md); shows a link when set
 
   // checkoutUrl: paste the Whop checkout link for each product. While it is empty the button only copies the order code.
   packages: [

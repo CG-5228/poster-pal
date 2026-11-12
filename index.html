@@ -110,6 +110,24 @@ legend{font-weight:700;font-size:14px;padding:0;margin-bottom:6px}
 .sizes input{position:absolute;opacity:0;pointer-events:none}
 .sizes label.on{background:var(--ink);color:#fff}
 .opt{font-weight:500;color:var(--muted)}
+.check{display:flex;gap:12px;align-items:flex-start;border:2px solid var(--line);border-radius:12px;padding:12px 14px;cursor:pointer;font-weight:500;font-size:14.5px;line-height:1.35}
+.check input{width:22px;height:22px;margin:1px 0 0;flex:none;accent-color:var(--pin)}
+.check small{display:block;color:var(--muted);font-size:13.5px}
+.check.on{border-color:var(--ink);background:#FFF6CF}
+.track{padding:44px 0 0}
+.track-card{display:grid;gap:22px;background:var(--ink);color:#fff;border-radius:20px;padding:22px}
+.track-card h2{color:#fff}
+.track-card .eyebrow{color:var(--sun)}
+.lede2{color:#E4E2EA;margin:12px 0 18px;max-width:34em}
+.tracker-link{display:inline-block;margin:12px 0 0 4px;color:#fff;font-weight:700}
+.report{background:#fff;color:var(--ink);border-radius:14px;padding:14px 16px;align-self:center}
+.report h3{font-size:15px;margin-bottom:10px}
+.report ol{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.report li{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;font-weight:700;font-size:14px}
+.report i{display:block;height:8px;border-radius:99px;background:var(--pin);margin-top:4px}
+.report .n{font-weight:900;font-size:18px}
+.report small{display:block;margin-top:10px;color:var(--muted);font-size:12.5px}
+@media(min-width:900px){.track-card{grid-template-columns:1.2fr .8fr;padding:32px}}
 
 .summary{background:var(--sun);border:2px solid var(--ink);border-radius:var(--r);padding:18px;box-shadow:4px 4px 0 var(--ink);scroll-margin-top:74px}
 .summary dl{margin:12px 0 14px;display:grid;gap:8px}
@@ -258,6 +276,8 @@ footer p+p{margin-top:6px}
               <label>Up on the boards by<input id="upby" type="date"></label>
               <label><span>Take them down after <span class="opt">(optional)</span></span><input id="down" type="date"></label>
               <label class="full"><span>Anything we should know? <span class="opt">(optional)</span></span><textarea id="notes" rows="2" maxlength="140" placeholder="e.g. avoid the library, or the event is in the Helix"></textarea></label>
+              <label class="full check"><input id="track" type="checkbox"><span><b>Add scan tracking</b> <span class="opt">(free, made for research posters)</span><small>Each location gets its own QR code, so you see which noticeboard brings people in.</small></span></label>
+              <label class="full" id="track-url-wrap" hidden>Where should the QR codes send people?<input id="trackurl" type="text" inputmode="url" maxlength="200" placeholder="https://your-sign-up-form"></label>
             </div>
           </div>
         </div>
@@ -288,6 +308,30 @@ footer p+p{margin-top:6px}
     </div>
   </section>
 
+  <section class="track" id="tracking">
+    <div class="wrap">
+      <div class="track-card">
+        <div>
+          <p class="eyebrow">For research posters</p>
+          <h2>See which board brings people in</h2>
+          <p class="lede2">Add scan tracking and every location gets its own QR code. You see how many people scanned at the library, the Student Centre or the Business School, by day and by hour. We never store names or IP addresses, only anonymous counts.</p>
+          <a class="btn" id="track-cta" href="#step-details">Add tracking to my order</a>
+          <a class="tracker-link" id="tracker-link" target="_blank" rel="noopener" hidden>Open the scan dashboard</a>
+        </div>
+        <div class="report" aria-label="Example scan report">
+          <h3>Example report</h3>
+          <ol>
+            <li><div>O'Reilly Library<i style="width:100%"></i></div><span class="n">41</span></li>
+            <li><div>The U (Student Centre)<i style="width:80%"></i></div><span class="n">33</span></li>
+            <li><div>Henry Grattan Building<i style="width:44%"></i></div><span class="n">18</span></li>
+            <li><div>DCU Business School<i style="width:22%"></i></div><span class="n">9</span></li>
+          </ol>
+          <small>Illustration only. Your report shows your own scans.</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="how">
     <div class="wrap">
       <h2>How it works</h2>
@@ -307,6 +351,7 @@ footer p+p{margin-top:6px}
       <details><summary>How do I send you my poster?</summary><p>Paste a Google Drive or Canva link at checkout, or send the file in Whop chat after you pay. If you chose Post only, we arrange a hand-over on campus.</p></details>
       <details><summary>Is this allowed on campus?</summary><p>We only use noticeboards and follow DCU's Notice Board Regulations. If your poster needs a stamp from your School or Unit before it goes up, we tell you before we post.</p></details>
       <details><summary>What if a board is full?</summary><p>We never cover someone else's current poster. We use the nearest board with space and tell you which one.</p></details>
+      <details><summary>What is scan tracking?</summary><p>For research posters we can print a different QR code for each location. Every scan is counted against the noticeboard it came from and then sent on to your link, so you learn which spots actually bring participants. It is free to add to any order.</p></details>
       <details><summary>Do you take the posters down?</summary><p>Yes. Give us a take-down date and we remove them, so the boards stay tidy for the next event.</p></details>
       <details><summary>Who is behind Poster Pal?</summary><p>Two DCU computer science students. We spent an evening putting up our own research posters and decided nobody else should have to.</p></details>
     </div>
@@ -363,7 +408,7 @@ footer p+p{margin-top:6px}
     pkg: CFG.packages[Math.min(1, CFG.packages.length - 1)].id,
     mode: 'auto', type: 'society', aud: 'everyone',
     count: Math.min(CFG.defaultSpots || 10, MAX),
-    selected: [], size: 'A3', name: '', upBy: '', downOn: '', notes: ''
+    selected: [], size: 'A3', name: '', upBy: '', downOn: '', notes: '', track: false, trackUrl: ''
   };
 
   var KEY = 'posterpal-order-v1';
@@ -425,6 +470,7 @@ footer p+p{margin-top:6px}
     if (state.downOn) parts.push('Down ' + state.downOn);
     if (state.name.trim()) parts.push('For: ' + state.name.trim().slice(0, 60));
     if (state.notes.trim()) parts.push('Note: ' + state.notes.trim().slice(0, 140));
+    if (state.track) parts.push('Scan tracking: yes' + (state.trackUrl.trim() ? ' -> ' + state.trackUrl.trim().slice(0, 200) : ''));
     return parts.join(' | ');
   }
 
@@ -479,6 +525,7 @@ footer p+p{margin-top:6px}
     ];
     if (state.downOn) rows.push(['Taken down', esc(fmtDate(state.downOn))]);
     if (state.name.trim()) rows.push(['For', esc(state.name.trim())]);
+    if (state.track) rows.push(['Tracking', 'One QR code per location']);
     rows.push(['Total', '<b class="total">' + esc(CUR) + esc(p.price) + '</b>']);
     $('#sum-list').innerHTML = rows.map(function (r) { return '<div><dt>' + r[0] + '</dt><dd>' + r[1] + '</dd></div>'; }).join('');
     $('#code').value = orderCode();
@@ -510,6 +557,9 @@ footer p+p{margin-top:6px}
     });
     $$('.sizes label').forEach(function (l) { var i = l.querySelector('input'); var on = i.value === state.size; i.checked = on; l.classList.toggle('on', on); });
     $('#picked-n').textContent = state.selected.length;
+    $('#track').checked = state.track;
+    $('#track').parentNode.classList.toggle('on', state.track);
+    $('#track-url-wrap').hidden = !state.track;
     renderSummary();
     save();
   }
@@ -562,6 +612,8 @@ footer p+p{margin-top:6px}
   $('#name').value = state.name; $('#notes').value = state.notes;
   $('#upby').value = state.upBy; $('#upby').min = isoLocal(today);
   $('#down').value = state.downOn; $('#down').min = isoLocal(today);
+  $('#trackurl').value = state.trackUrl;
+  if (CFG.trackerUrl) { var tl = $('#tracker-link'); tl.href = CFG.trackerUrl; tl.hidden = false; }
   $$('[data-spots]').forEach(function (el) { el.textContent = CFG.spots.length; });
   $$('[data-max]').forEach(function (el) { el.textContent = MAX; });
   $$('[data-from]').forEach(function (el) { el.textContent = CUR + Math.min.apply(null, CFG.packages.map(function (p) { return p.price; })); });
@@ -582,6 +634,9 @@ footer p+p{margin-top:6px}
   $('#notes').addEventListener('input', function (e) { state.notes = e.target.value; renderSummary(); save(); });
   $('#upby').addEventListener('change', function (e) { state.upBy = e.target.value; renderSummary(); save(); });
   $('#down').addEventListener('change', function (e) { state.downOn = e.target.value; renderSummary(); save(); });
+  $('#track').addEventListener('change', function (e) { state.track = e.target.checked; update(); });
+  $('#trackurl').addEventListener('input', function (e) { state.trackUrl = e.target.value; renderSummary(); save(); });
+  $('#track-cta').addEventListener('click', function () { state.track = true; update(); });
   $$('input[name="size"]').forEach(function (i) { i.addEventListener('change', function (e) { if (e.target.checked) { state.size = e.target.value; update(); } }); });
 
   $('#pay').addEventListener('click', function () {
