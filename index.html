@@ -144,6 +144,7 @@ footer p+p{margin-top:6px}
 #toast.show{opacity:1;transform:translate(-50%,0)}
 #selftest{margin:16px;padding:12px;background:#111;color:#9f9;font:12px/1.4 ui-monospace,Menlo,monospace;white-space:pre-wrap;border-radius:8px}
 .err{background:#fff;border:2px solid var(--pin);border-radius:12px;padding:16px;font-weight:700}
+.thanks{background:#1E7F56;color:#fff;font-weight:700;padding:14px 16px;text-align:center;line-height:1.35}
 
 @media(min-width:640px){
   .pkgs{grid-template-columns:repeat(3,1fr)}
@@ -597,6 +598,14 @@ footer p+p{margin-top:6px}
     });
     $('#next').hidden = false;
   });
+
+  if (/[?&]thanks=1/.test(location.search)) {
+    var th = document.createElement('div');
+    th.className = 'thanks';
+    th.setAttribute('role', 'status');
+    th.textContent = 'Payment received, thank you. If you have not shared a link to your poster, send the file in Whop chat. We will send you a photo of every poster once they are up.';
+    document.body.insertBefore(th, document.body.firstChild);
+  }
 
   if (/[?&]selftest=1/.test(location.search)) {
     var out = []; var allOk = true;

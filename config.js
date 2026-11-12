@@ -10,9 +10,9 @@ window.POSTERPAL_CONFIG = {
 
   // checkoutUrl: paste the Whop checkout link for each product. While it is empty the button only copies the order code.
   packages: [
-    { id: "post",   name: "Post",                  price: 10, tag: "You bring the posters",  blurb: "Hand us your printed posters and we put them up across campus within 24 hours.", checkoutUrl: "" },
-    { id: "print",  name: "Print + Post",          price: 20, tag: "Most popular",           blurb: "Send the file. We print up to 15 copies and put them up within 24 hours.",       checkoutUrl: "" },
-    { id: "design", name: "Design + Print + Post", price: 30, tag: "Just send the details",  blurb: "Tell us about your event. We design the poster, print it and put it up.",         checkoutUrl: "" }
+    { id: "post",   name: "Post",                  price: 10, tag: "You bring the posters",  blurb: "Hand us your printed posters and we put them up across campus within 24 hours.", checkoutUrl: "https://whop.com/checkout/plan_QREGn0w2qUeaP" },
+    { id: "print",  name: "Print + Post",          price: 20, tag: "Most popular",           blurb: "Send the file. We print up to 15 copies and put them up within 24 hours.",       checkoutUrl: "https://whop.com/checkout/plan_utfDtaOt0q90M" },
+    { id: "design", name: "Design + Print + Post", price: 30, tag: "Just send the details",  blurb: "Tell us about your event. We design the poster, print it and put it up.",         checkoutUrl: "https://whop.com/checkout/plan_cK9ZKqGxAMqr3" }
   ],
 
   map: { center: [53.38535, -6.25729], zoom: 16, bounds: [[53.3832, -6.2616], [53.3875, -6.2530]] },
