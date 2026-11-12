@@ -1,0 +1,628 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Poster Pal · Posters up across DCU Glasnevin by tomorrow</title>
+<meta name="description" content="Poster Pal designs, prints and puts up your posters on noticeboards across DCU Glasnevin within 24 hours, with a photo of every one. From €10.">
+<meta property="og:title" content="Poster Pal · Posters up across DCU Glasnevin by tomorrow">
+<meta property="og:description" content="We design, print and put up your posters across campus, send a photo of every one, and take them down after. From €10.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#E23D3D">
+<meta name="color-scheme" content="light">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23E23D3D'/%3E%3Crect x='17' y='16' width='30' height='38' rx='3' fill='%23fff'/%3E%3Ccircle cx='32' cy='16' r='6' fill='%23FFD44D' stroke='%2317171C' stroke-width='3'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" integrity="sha384-c6Rcwz4e4CITMbu/NBmnNS8yN2sC3cUElMEMfP3vqqKFp7GOYaaBBCqmaWBjmkjb" crossorigin="anonymous">
+<style>
+:root{--paper:#FBF6EC;--card:#fff;--ink:#17171C;--muted:#5C5A66;--line:#E6DDCB;--pin:#E23D3D;--pin-d:#B42A2A;--sun:#FFD44D;--cork:#C99A62;--r:16px}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;overflow-x:hidden}
+a{color:inherit}
+h1,h2,h3{line-height:1.05;letter-spacing:-.02em;margin:0}
+p{margin:0}
+.wrap{max-width:1120px;margin:0 auto;padding:0 16px}
+
+.top{position:sticky;top:0;z-index:1100;background:rgba(251,246,236,.94);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:2px solid var(--ink)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:900;font-size:20px;text-decoration:none;letter-spacing:-.02em}
+.brand svg{width:30px;height:30px;flex:none}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--pin);color:#fff;font:inherit;font-weight:800;border:0;border-radius:999px;padding:14px 22px;font-size:16px;text-decoration:none;cursor:pointer;box-shadow:0 3px 0 var(--pin-d);transition:transform .08s,box-shadow .08s}
+.btn:hover{transform:translateY(-1px);box-shadow:0 4px 0 var(--pin-d)}
+.btn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--pin-d)}
+.btn:focus-visible,.seg button:focus-visible,.stepper button:focus-visible,.link:focus-visible,summary:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.btn.sm{padding:9px 16px;font-size:14px}
+
+.hero{padding:34px 0 26px}
+.hero .wrap{display:grid;gap:28px;align-items:center}
+.eyebrow{font-weight:800;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--pin-d);margin-bottom:12px}
+h1{font-size:clamp(40px,10vw,80px);font-weight:900;text-transform:uppercase;letter-spacing:-.035em;line-height:.95}
+h1 mark{background:var(--sun);color:inherit;padding:0 .1em;border-radius:6px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.lede{font-size:clamp(17px,2.4vw,20px);color:#33323B;max-width:34em;margin:18px 0 22px}
+.cta{display:flex;flex-wrap:wrap;align-items:center;gap:14px}
+.from{font-weight:700;color:var(--muted);font-size:15px}
+.board{position:relative;aspect-ratio:5/4;width:100%;max-width:480px;margin:0 auto;background:radial-gradient(rgba(90,55,20,.28) 1px,transparent 1.5px) 0 0/9px 9px,radial-gradient(rgba(255,235,200,.35) 1px,transparent 1.5px) 4px 5px/11px 11px,var(--cork);border:12px solid #6E4827;border-radius:12px;box-shadow:0 18px 40px -22px rgba(23,23,28,.6),inset 0 0 0 2px rgba(0,0,0,.18)}
+.sheet{position:absolute;width:44%;padding:30px 12px 14px;box-shadow:0 8px 14px -8px rgba(0,0,0,.55);font-weight:900;text-transform:uppercase;line-height:1;font-size:clamp(15px,4vw,23px);color:var(--ink)}
+.sheet i{display:block;margin-top:8px;font-style:normal;font-weight:700;font-size:.55em;line-height:1.25;text-transform:none;color:#3d3d44}
+.sheet::before{content:"";position:absolute;top:9px;left:50%;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:var(--pin);box-shadow:inset -2px -2px 0 rgba(0,0,0,.25),0 2px 3px rgba(0,0,0,.4)}
+.s1{left:5%;top:8%;transform:rotate(-5deg);background:#fff}
+.s2{right:5%;top:15%;transform:rotate(4deg);background:var(--sun)}
+.s3{left:26%;bottom:7%;transform:rotate(-1.5deg);background:#DDF0FF}
+
+.facts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.fact{background:var(--card);border:2px solid var(--ink);border-radius:12px;padding:12px 14px;font-weight:700;font-size:14px;line-height:1.25}
+.fact b{display:block;font-size:24px;font-weight:900;letter-spacing:-.02em;margin-bottom:2px}
+
+.build{padding:40px 0 0;scroll-margin-top:62px}
+h2{font-size:clamp(28px,6vw,44px);font-weight:900;text-transform:uppercase;letter-spacing:-.03em}
+.sub{color:var(--muted);margin:8px 0 20px}
+.grid{display:grid;gap:18px}
+.step{background:var(--card);border:2px solid var(--ink);border-radius:var(--r);padding:16px;box-shadow:4px 4px 0 var(--ink);margin-bottom:18px;scroll-margin-top:74px}
+.step:last-child{margin-bottom:0}
+.step-h{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.num{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--ink);color:#fff;font-weight:900;font-size:15px;flex:none}
+h3{font-size:20px;font-weight:900;letter-spacing:-.02em}
+
+.pkgs{display:grid;gap:10px}
+.pkg{position:relative;display:grid;gap:2px;align-content:start;border:2px solid var(--line);border-radius:12px;padding:12px 14px;cursor:pointer;background:#fff}
+.pkg input{position:absolute;opacity:0;pointer-events:none}
+.pkg.on{border-color:var(--ink);background:#FFF6CF;box-shadow:3px 3px 0 var(--ink)}
+.pkg:focus-within{outline:3px solid var(--pin);outline-offset:2px}
+.pkg-tag{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--pin-d)}
+.pkg-name{font-weight:900;font-size:17px;line-height:1.15}
+.pkg-price{font-weight:900;font-size:26px;letter-spacing:-.02em;line-height:1.1}
+.pkg-blurb{font-size:13.5px;color:var(--muted);line-height:1.35}
+
+.seg{display:grid;grid-template-columns:1fr 1fr;border:2px solid var(--ink);border-radius:12px;overflow:hidden;margin-bottom:14px}
+.seg button{border:0;background:#fff;padding:12px 8px;font:inherit;font-weight:800;font-size:14.5px;line-height:1.2;cursor:pointer;color:var(--ink)}
+.seg button+button{border-left:2px solid var(--ink)}
+.seg button.on{background:var(--ink);color:#fff}
+.auto{display:grid;gap:12px;margin-bottom:14px}
+label{display:grid;gap:6px;font-weight:700;font-size:14px}
+select,input[type=text],input[type=date],textarea{font:inherit;font-size:16px;padding:10px 12px;border:2px solid var(--ink);border-radius:10px;background:#fff;color:var(--ink);width:100%;min-height:46px;-webkit-appearance:none;appearance:none}
+select{background-image:linear-gradient(45deg,transparent 50%,var(--ink) 50%),linear-gradient(135deg,var(--ink) 50%,transparent 50%);background-position:calc(100% - 20px) 20px,calc(100% - 14px) 20px;background-size:6px 6px;background-repeat:no-repeat;padding-right:36px}
+textarea{resize:vertical;min-height:64px}
+.stepper{display:grid;gap:6px;font-weight:700;font-size:14px}
+.stepper div{display:flex;align-items:center;border:2px solid var(--ink);border-radius:10px;overflow:hidden;background:#fff;width:max-content}
+.stepper button{width:46px;height:42px;border:0;background:#fff;font-size:22px;font-weight:900;cursor:pointer;color:var(--ink)}
+.stepper button:disabled{opacity:.3;cursor:default}
+.stepper output{min-width:44px;text-align:center;font-weight:900;font-size:18px}
+.hint{margin-bottom:12px;color:var(--muted);font-size:14.5px}
+#map{height:340px;border:2px solid var(--ink);border-radius:12px;background:#E9E4D8;z-index:0}
+.map-off{display:grid;place-items:center;color:var(--muted);font-weight:700;padding:16px;text-align:center}
+.leaflet-container{font:inherit}
+.picked{display:flex;align-items:center;gap:10px;margin:12px 0 10px;font-size:15px}
+.link{border:0;background:none;padding:0;font:inherit;font-weight:700;text-decoration:underline;cursor:pointer;color:var(--pin-d)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{position:relative;display:inline-flex;font-weight:700;font-size:14px;cursor:pointer}
+.chip input{position:absolute;opacity:0;pointer-events:none}
+.chip span{display:block;border:2px solid var(--line);background:#fff;border-radius:999px;padding:8px 13px;line-height:1.2}
+.chip.on span{background:var(--pin);border-color:var(--pin-d);color:#fff}
+.chip:focus-within span{outline:3px solid var(--ink);outline-offset:2px}
+
+.form{display:grid;gap:14px}
+fieldset{border:0;padding:0;margin:0;min-width:0}
+legend{font-weight:700;font-size:14px;padding:0;margin-bottom:6px}
+.sizes{display:grid;grid-template-columns:1fr 1fr;border:2px solid var(--ink);border-radius:10px;overflow:hidden;min-height:46px}
+.sizes label{display:grid;place-items:center;cursor:pointer;font-weight:800;font-size:15px;position:relative;background:#fff;min-height:42px}
+.sizes label+label{border-left:2px solid var(--ink)}
+.sizes input{position:absolute;opacity:0;pointer-events:none}
+.sizes label.on{background:var(--ink);color:#fff}
+.opt{font-weight:500;color:var(--muted)}
+
+.summary{background:var(--sun);border:2px solid var(--ink);border-radius:var(--r);padding:18px;box-shadow:4px 4px 0 var(--ink);scroll-margin-top:74px}
+.summary dl{margin:12px 0 14px;display:grid;gap:8px}
+.summary dl div{display:grid;grid-template-columns:92px 1fr;gap:10px;font-size:14.5px}
+dt{font-weight:800}
+dd{margin:0;min-width:0}
+.tagc{display:inline-block;background:#fff;border:1.5px solid var(--ink);border-radius:999px;padding:1px 8px;margin:0 2px 4px 0;font-size:12.5px;font-weight:700}
+.total{font-size:26px;font-weight:900;line-height:1}
+.code-l textarea{font:12.5px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;min-height:104px}
+.btn.big{width:100%;margin-top:12px;font-size:17px;line-height:1.2;padding:16px 18px;border-radius:14px;text-align:center;background:var(--ink);box-shadow:0 3px 0 #000}
+.btn.big:hover{box-shadow:0 4px 0 #000}
+.btn.big:active{box-shadow:0 1px 0 #000}
+.fine{font-size:13px;margin-top:10px;color:#3B3A30}
+.next{margin-top:14px;background:#fff;border:2px solid var(--ink);border-radius:12px;padding:12px 14px;font-size:14.5px}
+.next ol{margin:6px 0 0;padding-left:20px}
+.bar{position:sticky;bottom:0;z-index:1050;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--ink);color:#fff;border-radius:14px 14px 0 0;padding:10px 14px;margin-top:18px}
+.bar b{font-size:22px;font-weight:900;margin-right:8px}
+.bar span{font-size:13px;opacity:.85}
+
+.how{padding:44px 0 8px}
+.how ol{list-style:none;padding:0;margin:18px 0 0;display:grid;gap:12px;counter-reset:s}
+.how li{background:var(--card);border:2px solid var(--ink);border-radius:14px;padding:14px;counter-increment:s;font-size:14.5px;color:#33323B}
+.how li::before{content:counter(s);display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--pin);color:#fff;font-weight:900;margin-bottom:8px}
+.how li b{display:block;font-size:17px;color:var(--ink);margin-bottom:2px}
+.faq{padding:36px 0 44px}
+details{background:var(--card);border:2px solid var(--ink);border-radius:12px;padding:12px 14px;margin-top:10px}
+summary{font-weight:800;cursor:pointer}
+details p{margin-top:8px;color:#33323B;font-size:15px}
+footer{border-top:2px solid var(--ink);padding:22px 0 28px;font-size:13px;color:var(--muted)}
+footer p+p{margin-top:6px}
+#toast{position:fixed;left:50%;bottom:76px;transform:translate(-50%,20px);background:var(--ink);color:#fff;padding:11px 16px;border-radius:12px;font-weight:700;font-size:14.5px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:1200;width:max-content;max-width:min(92vw,420px);text-align:center;box-shadow:0 10px 30px -10px rgba(0,0,0,.6)}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+#selftest{margin:16px;padding:12px;background:#111;color:#9f9;font:12px/1.4 ui-monospace,Menlo,monospace;white-space:pre-wrap;border-radius:8px}
+.err{background:#fff;border:2px solid var(--pin);border-radius:12px;padding:16px;font-weight:700}
+
+@media(min-width:640px){
+  .pkgs{grid-template-columns:repeat(3,1fr)}
+  .auto{grid-template-columns:1fr 1fr auto;align-items:end}
+  .form{grid-template-columns:1fr 1fr}
+  .form .full{grid-column:1/-1}
+}
+@media(min-width:760px){
+  .facts{grid-template-columns:repeat(4,1fr)}
+  .how ol{grid-template-columns:repeat(4,1fr)}
+}
+@media(min-width:900px){
+  .hero{padding:64px 0 44px}
+  .hero .wrap{grid-template-columns:1.15fr .85fr;gap:48px}
+}
+@media(min-width:980px){
+  .grid{grid-template-columns:minmax(0,1fr) 380px;align-items:start}
+  .side{position:sticky;top:78px}
+  #map{height:430px}
+  .bar{display:none}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn,#toast{transition:none}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Poster Pal home">
+      <svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#E23D3D"/><rect x="17" y="16" width="30" height="38" rx="3" fill="#fff"/><circle cx="32" cy="16" r="6" fill="#FFD44D" stroke="#17171C" stroke-width="3"/></svg>
+      Poster Pal
+    </a>
+    <a class="btn sm" href="#build">Plan my poster run</a>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <p class="eyebrow">DCU Glasnevin · run by students</p>
+        <h1>Your posters, up on every board <mark>by tomorrow.</mark></h1>
+        <p class="lede">We design, print and put up your posters across campus, send you a photo of every one, and take them down after your event. You never spend an evening walking around with a stapler.</p>
+        <div class="cta">
+          <a class="btn" href="#build">Plan my poster run</a>
+          <span class="from">From <span data-from>€10</span> · up within 24 hours</span>
+        </div>
+      </div>
+      <div class="board" aria-hidden="true">
+        <div class="sheet s1">Society<br>night<i>Thursday, 8pm · The U</i></div>
+        <div class="sheet s2">Take part<br>in our study<i>20 minutes · on campus</i></div>
+        <div class="sheet s3">5-a-side<br>sign-ups<i>Sports Complex · all levels</i></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap" aria-label="What you get">
+    <div class="facts">
+      <div class="fact"><b><span data-spots>25</span> spots</b>mapped across Glasnevin campus</div>
+      <div class="fact"><b>Photo proof</b>a picture of every poster we put up</div>
+      <div class="fact"><b>Taken down</b>after your event, so boards stay tidy</div>
+      <div class="fact"><b>Rule-aware</b>noticeboards only, never walls or doors</div>
+    </div>
+  </section>
+
+  <section id="build" class="build">
+    <div class="wrap">
+      <h2>Plan your poster run</h2>
+      <p class="sub">Three quick steps. You pay securely on Whop at the end.</p>
+
+      <div class="grid">
+        <div class="main">
+          <div class="step" id="step-pkg">
+            <div class="step-h"><span class="num">1</span><h3>What do you need?</h3></div>
+            <div class="pkgs" id="pkgs" role="radiogroup" aria-label="Package"></div>
+          </div>
+
+          <div class="step" id="step-where">
+            <div class="step-h"><span class="num">2</span><h3>Where should they go?</h3></div>
+            <div class="seg">
+              <button type="button" id="mode-auto" class="on" aria-pressed="true">Poster Pal picks for me</button>
+              <button type="button" id="mode-manual" aria-pressed="false">I'll choose my spots</button>
+            </div>
+            <div class="auto" id="auto-controls">
+              <label>What's the poster for?<select id="type"></select></label>
+              <label>Who should see it?<select id="aud"></select></label>
+              <div class="stepper"><span id="count-l">How many posters?</span>
+                <div role="group" aria-labelledby="count-l">
+                  <button type="button" id="minus" aria-label="Fewer posters">&minus;</button>
+                  <output id="count">10</output>
+                  <button type="button" id="plus" aria-label="More posters">+</button>
+                </div>
+              </div>
+            </div>
+            <p class="hint" id="manual-hint" hidden>Tap the pins on the map or the names below. Up to <span data-max>15</span> spots per order.</p>
+            <div id="map" role="application" aria-label="Map of noticeboard spots on DCU Glasnevin campus"></div>
+            <p class="picked"><span><b id="picked-n">0</b> spots selected</span><button type="button" class="link" id="clear">Clear all</button></p>
+            <div class="chips" id="spots"></div>
+          </div>
+
+          <div class="step" id="step-details">
+            <div class="step-h"><span class="num">3</span><h3>A few details</h3></div>
+            <div class="form">
+              <label>Society, club or your name<input id="name" type="text" maxlength="60" autocomplete="organization" placeholder="e.g. Games Society"></label>
+              <fieldset>
+                <legend>Poster size</legend>
+                <div class="sizes">
+                  <label><input type="radio" name="size" value="A4">A4</label>
+                  <label><input type="radio" name="size" value="A3">A3</label>
+                </div>
+              </fieldset>
+              <label>Up on the boards by<input id="upby" type="date"></label>
+              <label><span>Take them down after <span class="opt">(optional)</span></span><input id="down" type="date"></label>
+              <label class="full"><span>Anything we should know? <span class="opt">(optional)</span></span><textarea id="notes" rows="2" maxlength="140" placeholder="e.g. avoid the library, or the event is in the Helix"></textarea></label>
+            </div>
+          </div>
+        </div>
+
+        <aside class="side">
+          <div class="summary" id="summary">
+            <h3>Your order</h3>
+            <dl id="sum-list"></dl>
+            <label class="code-l">Your order code<textarea id="code" readonly rows="5" aria-describedby="pay-note"></textarea></label>
+            <button type="button" class="btn big" id="pay">Copy order code</button>
+            <p class="fine" id="pay-note"></p>
+            <div class="next" id="next" hidden>
+              <b>What happens next</b>
+              <ol>
+                <li>Paste your order code when the checkout asks for it.</li>
+                <li>Send your poster file as a link at checkout, or in Whop chat after you pay.</li>
+                <li>We put your posters up and send you a photo of every one.</li>
+              </ol>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <div class="bar" id="bar">
+        <div><b id="bar-price">€20</b><span id="bar-meta"></span></div>
+        <a class="btn sm" href="#summary">Review order</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="how">
+    <div class="wrap">
+      <h2>How it works</h2>
+      <ol>
+        <li><b>Plan it</b>Pick a package and where your posters should go, or let us choose the best spots for your audience.</li>
+        <li><b>Pay on Whop</b>One price, paid securely online. No cash, no chasing committee members.</li>
+        <li><b>We do the run</b>We print and put up your posters in the evening, when the buildings are quiet.</li>
+        <li><b>You get proof</b>A photo of every poster on its board, and we take them down after your event.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="faq">
+    <div class="wrap">
+      <h2>Questions</h2>
+      <details><summary>How fast is it?</summary><p>Within 24 hours of your order. We do our runs in the evening, which is the best time to put posters up.</p></details>
+      <details><summary>How do I send you my poster?</summary><p>Paste a Google Drive or Canva link at checkout, or send the file in Whop chat after you pay. If you chose Post only, we arrange a hand-over on campus.</p></details>
+      <details><summary>Is this allowed on campus?</summary><p>We only use noticeboards and follow DCU's Notice Board Regulations. If your poster needs a stamp from your School or Unit before it goes up, we tell you before we post.</p></details>
+      <details><summary>What if a board is full?</summary><p>We never cover someone else's current poster. We use the nearest board with space and tell you which one.</p></details>
+      <details><summary>Do you take the posters down?</summary><p>Yes. Give us a take-down date and we remove them, so the boards stay tidy for the next event.</p></details>
+      <details><summary>Who is behind Poster Pal?</summary><p>Two DCU computer science students. We spent an evening putting up our own research posters and decided nobody else should have to.</p></details>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Poster Pal is an independent student business. Not affiliated with or endorsed by Dublin City University.</p>
+    <p>Payments are handled by Whop. Map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors.</p>
+  </div>
+</footer>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="config.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" integrity="sha384-NElt3Op+9NBMCYaef5HxeJmU4Xeard/Lku8ek6hoPTvYkQPh3zLIrJP7KiRocsxO" crossorigin="anonymous"></script>
+<script>
+(function () {
+  'use strict';
+  var CFG = window.POSTERPAL_CONFIG;
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var esc = function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
+
+  if (!CFG || !Array.isArray(CFG.spots) || !CFG.spots.length || !Array.isArray(CFG.packages) || !CFG.packages.length) {
+    var holder = $('#build .wrap');
+    if (holder) holder.innerHTML = '<p class="err">Poster Pal could not load its settings. Please refresh the page.</p>';
+    return;
+  }
+
+  var MAX = Math.min(CFG.maxSpots || 15, CFG.spots.length);
+  var CUR = CFG.currency || '€';
+  var TYPES = [
+    { id: 'society', label: 'Society event', zones: { social: 4, living: 3, study: 2, sport: 1 } },
+    { id: 'research', label: 'Research study (finding participants)', zones: { study: 4, social: 3, living: 2, teaching: 2 } },
+    { id: 'sports', label: 'Club or sports', zones: { sport: 6, social: 3, living: 3 } },
+    { id: 'talk', label: 'Talk or academic event', zones: { teaching: 4, study: 3, venue: 2 } },
+    { id: 'campaign', label: 'Campaign or student services', zones: { social: 3, study: 3, teaching: 2, living: 2 } },
+    { id: 'other', label: 'Something else', zones: {} }
+  ];
+  var AUDS = [
+    { id: 'everyone', label: 'Everyone on campus' },
+    { id: 'computing', label: 'Computing students' },
+    { id: 'engineering', label: 'Engineering students' },
+    { id: 'science', label: 'Science students' },
+    { id: 'health', label: 'Nursing and health students' },
+    { id: 'business', label: 'Business students' },
+    { id: 'humanities', label: 'Humanities students' },
+    { id: 'residents', label: 'People living on campus' }
+  ];
+
+  var state = {
+    pkg: CFG.packages[Math.min(1, CFG.packages.length - 1)].id,
+    mode: 'auto', type: 'society', aud: 'everyone',
+    count: Math.min(CFG.defaultSpots || 10, MAX),
+    selected: [], size: 'A3', name: '', upBy: '', downOn: '', notes: ''
+  };
+
+  var KEY = 'posterpal-order-v1';
+  function load() {
+    try {
+      var raw = localStorage.getItem(KEY);
+      if (raw) {
+        var s = JSON.parse(raw);
+        if (s && typeof s === 'object') {
+          Object.keys(state).forEach(function (k) { if (k in s && typeof s[k] === typeof state[k]) state[k] = s[k]; });
+        }
+      }
+    } catch (e) { /* storage unavailable: carry on with defaults */ }
+    var ids = CFG.spots.map(function (s) { return s.id; });
+    if (!CFG.packages.some(function (p) { return p.id === state.pkg; })) state.pkg = CFG.packages[Math.min(1, CFG.packages.length - 1)].id;
+    state.selected = (Array.isArray(state.selected) ? state.selected : []).filter(function (id, i, a) { return ids.indexOf(id) !== -1 && a.indexOf(id) === i; }).slice(0, MAX);
+    state.count = Math.max(1, Math.min(MAX, parseInt(state.count, 10) || 10));
+    if (!TYPES.some(function (t) { return t.id === state.type; })) state.type = 'society';
+    if (!AUDS.some(function (a) { return a.id === state.aud; })) state.aud = 'everyone';
+    if (state.mode !== 'manual') state.mode = 'auto';
+    if (state.size !== 'A4') state.size = 'A3';
+  }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* ignore */ } }
+
+  function isoLocal(d) { var p = function (n) { return (n < 10 ? '0' : '') + n; }; return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()); }
+  function fmtDate(iso) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || '');
+    if (!m) return '';
+    var d = new Date(+m[1], +m[2] - 1, +m[3]);
+    try { return d.toLocaleDateString('en-IE', { weekday: 'short', day: 'numeric', month: 'short' }); } catch (e) { return iso; }
+  }
+  function pkg() { for (var i = 0; i < CFG.packages.length; i++) if (CFG.packages[i].id === state.pkg) return CFG.packages[i]; return CFG.packages[0]; }
+  function byId(list, id) { for (var i = 0; i < list.length; i++) if (list[i].id === id) return list[i]; return list[list.length - 1]; }
+  function orderedSelected() { return CFG.spots.filter(function (s) { return state.selected.indexOf(s.id) !== -1; }); }
+
+  // Rule-based picker: busy places first, then places that suit the poster type and the audience.
+  function recommend(typeId, audId, count) {
+    var t = byId(TYPES, typeId);
+    var scored = CFG.spots.map(function (s, i) {
+      var aud = s.audiences || ['all'];
+      var score = (s.footfall || 1) * 2 + (t.zones[s.zone] || 0);
+      if (audId !== 'everyone') {
+        if (aud.indexOf(audId) !== -1) score += 7;
+        else if (aud.indexOf('all') === -1) score -= 4;
+      }
+      return { id: s.id, score: score, i: i };
+    });
+    scored.sort(function (a, b) { return b.score - a.score || a.i - b.i; });
+    var n = Math.max(1, Math.min(count, MAX));
+    return scored.slice(0, n).map(function (x) { return x.id; });
+  }
+
+  function orderCode() {
+    var p = pkg();
+    var spots = orderedSelected();
+    var parts = ['POSTERPAL', p.name, state.size + ' x' + spots.length, 'Spots: ' + (spots.map(function (s) { return s.id; }).join(', ') || 'none')];
+    parts.push(state.mode === 'auto' ? 'Picked by Poster Pal (' + byId(TYPES, state.type).label + '; ' + byId(AUDS, state.aud).label + ')' : 'Chosen by customer');
+    if (state.upBy) parts.push('Up by ' + state.upBy);
+    if (state.downOn) parts.push('Down ' + state.downOn);
+    if (state.name.trim()) parts.push('For: ' + state.name.trim().slice(0, 60));
+    if (state.notes.trim()) parts.push('Note: ' + state.notes.trim().slice(0, 140));
+    return parts.join(' | ');
+  }
+
+  var map = null;
+  var markers = {};
+  function markerStyle(on) { return { radius: on ? 11 : 8, weight: 2, color: on ? '#7F1D1D' : '#17171C', fillColor: on ? '#E23D3D' : '#FFFFFF', fillOpacity: 1 }; }
+  function initMap() {
+    var el = $('#map');
+    if (!window.L) { el.className = 'map-off'; el.textContent = 'The map could not load. You can still choose spots from the list below.'; return; }
+    try {
+      map = L.map(el, { scrollWheelZoom: false, zoomControl: true });
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors' }).addTo(map);
+      if (CFG.map && CFG.map.bounds) map.fitBounds(CFG.map.bounds, { padding: [10, 10] });
+      else map.setView((CFG.map && CFG.map.center) || [CFG.spots[0].lat, CFG.spots[0].lon], 16);
+      CFG.spots.forEach(function (s) {
+        var m = L.circleMarker([s.lat, s.lon], markerStyle(false)).addTo(map);
+        m.bindTooltip(s.name, { direction: 'top', offset: [0, -8] });
+        m.on('click', function () { toggleSpot(s.id, true); });
+        markers[s.id] = m;
+      });
+    } catch (e) {
+      map = null; markers = {};
+      el.className = 'map-off'; el.textContent = 'The map could not load. You can still choose spots from the list below.';
+    }
+  }
+
+  function renderPkgs() {
+    $('#pkgs').innerHTML = CFG.packages.map(function (p) {
+      return '<label class="pkg"><input type="radio" name="pkg" value="' + esc(p.id) + '">' +
+        '<span class="pkg-tag">' + esc(p.tag || '') + '</span>' +
+        '<span class="pkg-name">' + esc(p.name) + '</span>' +
+        '<span class="pkg-price">' + esc(CUR) + esc(p.price) + '</span>' +
+        '<span class="pkg-blurb">' + esc(p.blurb || '') + '</span></label>';
+    }).join('');
+  }
+  function renderSpots() {
+    $('#spots').innerHTML = CFG.spots.map(function (s) {
+      return '<label class="chip"><input type="checkbox" value="' + esc(s.id) + '"><span>' + esc(s.name) + '</span></label>';
+    }).join('');
+  }
+
+  function renderSummary() {
+    var p = pkg();
+    var spots = orderedSelected();
+    var n = spots.length;
+    var rows = [
+      ['Package', esc(p.name)],
+      ['Posters', n ? n + ' × ' + esc(state.size) : 'No spots chosen yet'],
+      ['Where', n ? spots.map(function (s) { return '<span class="tagc">' + esc(s.name) + '</span>'; }).join('') : '—'],
+      ['Chosen by', state.mode === 'auto' ? 'Poster Pal, for ' + esc(byId(AUDS, state.aud).label.toLowerCase()) : 'You'],
+      ['Up by', esc(fmtDate(state.upBy) || 'Within 24 hours')]
+    ];
+    if (state.downOn) rows.push(['Taken down', esc(fmtDate(state.downOn))]);
+    if (state.name.trim()) rows.push(['For', esc(state.name.trim())]);
+    rows.push(['Total', '<b class="total">' + esc(CUR) + esc(p.price) + '</b>']);
+    $('#sum-list').innerHTML = rows.map(function (r) { return '<div><dt>' + r[0] + '</dt><dd>' + r[1] + '</dd></div>'; }).join('');
+    $('#code').value = orderCode();
+    var url = (p.checkoutUrl || '').trim();
+    $('#pay').textContent = url ? 'Copy order code and pay ' + CUR + p.price + ' on Whop' : 'Copy order code';
+    $('#pay-note').textContent = url
+      ? 'Opens Whop’s secure checkout in a new tab. Paste your order code when it asks.'
+      : 'Online checkout opens shortly. Copy your code and show it to the Poster Pal team to book.';
+    $('#bar-price').textContent = CUR + p.price;
+    $('#bar-meta').textContent = p.name + ' · ' + n + (n === 1 ? ' spot' : ' spots');
+  }
+
+  function update() {
+    if (state.mode === 'auto') state.selected = recommend(state.type, state.aud, state.count);
+    $$('.pkg').forEach(function (l) { var i = l.querySelector('input'); var on = i.value === state.pkg; i.checked = on; l.classList.toggle('on', on); });
+    var auto = state.mode === 'auto';
+    $('#mode-auto').classList.toggle('on', auto); $('#mode-auto').setAttribute('aria-pressed', String(auto));
+    $('#mode-manual').classList.toggle('on', !auto); $('#mode-manual').setAttribute('aria-pressed', String(!auto));
+    $('#auto-controls').hidden = !auto;
+    $('#manual-hint').hidden = auto;
+    $('#count').textContent = state.count;
+    $('#minus').disabled = state.count <= 1;
+    $('#plus').disabled = state.count >= MAX;
+    $$('#spots input').forEach(function (i) { var on = state.selected.indexOf(i.value) !== -1; i.checked = on; i.parentNode.classList.toggle('on', on); });
+    Object.keys(markers).forEach(function (id) {
+      var on = state.selected.indexOf(id) !== -1;
+      markers[id].setStyle(markerStyle(on));
+      if (on) markers[id].bringToFront();
+    });
+    $$('.sizes label').forEach(function (l) { var i = l.querySelector('input'); var on = i.value === state.size; i.checked = on; l.classList.toggle('on', on); });
+    $('#picked-n').textContent = state.selected.length;
+    renderSummary();
+    save();
+  }
+
+  function toggleSpot(id, manual, want) {
+    var has = state.selected.indexOf(id) !== -1;
+    var on = typeof want === 'boolean' ? want : !has;
+    if (manual && state.mode === 'auto') { state.mode = 'manual'; toast('You are now choosing your own spots.'); }
+    if (on && !has) {
+      if (state.selected.length >= MAX) { toast('Up to ' + MAX + ' spots per order. Need more? Add a note and we will quote you.'); update(); return; }
+      state.selected.push(id);
+    } else if (!on && has) {
+      state.selected = state.selected.filter(function (x) { return x !== id; });
+    }
+    update();
+  }
+
+  var toastT = null;
+  function toast(msg) {
+    var el = $('#toast');
+    el.textContent = msg; el.classList.add('show');
+    clearTimeout(toastT);
+    toastT = setTimeout(function () { el.classList.remove('show'); }, 3400);
+  }
+
+  function fallbackCopy(text) {
+    try {
+      var t = $('#code');
+      t.focus(); t.select(); t.setSelectionRange(0, text.length);
+      return !!document.execCommand('copy');
+    } catch (e) { return false; }
+  }
+  function copy(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      return navigator.clipboard.writeText(text).then(function () { return true; }, function () { return fallbackCopy(text); });
+    }
+    return Promise.resolve(fallbackCopy(text));
+  }
+
+  // ---- start up ----
+  load();
+  var today = new Date();
+  var tomorrow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+  if (!state.upBy || state.upBy < isoLocal(today)) state.upBy = isoLocal(tomorrow);
+  if (state.downOn && state.downOn < state.upBy) state.downOn = '';
+
+  $('#type').innerHTML = TYPES.map(function (t) { return '<option value="' + t.id + '">' + esc(t.label) + '</option>'; }).join('');
+  $('#aud').innerHTML = AUDS.map(function (a) { return '<option value="' + a.id + '">' + esc(a.label) + '</option>'; }).join('');
+  $('#type').value = state.type; $('#aud').value = state.aud;
+  $('#name').value = state.name; $('#notes').value = state.notes;
+  $('#upby').value = state.upBy; $('#upby').min = isoLocal(today);
+  $('#down').value = state.downOn; $('#down').min = isoLocal(today);
+  $$('[data-spots]').forEach(function (el) { el.textContent = CFG.spots.length; });
+  $$('[data-max]').forEach(function (el) { el.textContent = MAX; });
+  $$('[data-from]').forEach(function (el) { el.textContent = CUR + Math.min.apply(null, CFG.packages.map(function (p) { return p.price; })); });
+
+  renderPkgs(); renderSpots(); initMap(); update();
+  if (map) setTimeout(function () { map.invalidateSize(); if (CFG.map && CFG.map.bounds) map.fitBounds(CFG.map.bounds, { padding: [10, 10] }); }, 300);
+
+  $('#pkgs').addEventListener('change', function (e) { if (e.target && e.target.name === 'pkg') { state.pkg = e.target.value; update(); } });
+  $('#spots').addEventListener('change', function (e) { if (e.target && e.target.type === 'checkbox') toggleSpot(e.target.value, true, e.target.checked); });
+  $('#type').addEventListener('change', function (e) { state.type = e.target.value; update(); });
+  $('#aud').addEventListener('change', function (e) { state.aud = e.target.value; update(); });
+  $('#minus').addEventListener('click', function () { state.count = Math.max(1, state.count - 1); update(); });
+  $('#plus').addEventListener('click', function () { state.count = Math.min(MAX, state.count + 1); update(); });
+  $('#mode-auto').addEventListener('click', function () { state.mode = 'auto'; update(); });
+  $('#mode-manual').addEventListener('click', function () { state.mode = 'manual'; update(); });
+  $('#clear').addEventListener('click', function () { state.mode = 'manual'; state.selected = []; update(); });
+  $('#name').addEventListener('input', function (e) { state.name = e.target.value; renderSummary(); save(); });
+  $('#notes').addEventListener('input', function (e) { state.notes = e.target.value; renderSummary(); save(); });
+  $('#upby').addEventListener('change', function (e) { state.upBy = e.target.value; renderSummary(); save(); });
+  $('#down').addEventListener('change', function (e) { state.downOn = e.target.value; renderSummary(); save(); });
+  $$('input[name="size"]').forEach(function (i) { i.addEventListener('change', function (e) { if (e.target.checked) { state.size = e.target.value; update(); } }); });
+
+  $('#pay').addEventListener('click', function () {
+    if (!state.selected.length) {
+      toast('Choose at least one spot first.');
+      $('#step-where').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+    var url = (pkg().checkoutUrl || '').trim();
+    var code = $('#code').value;
+    if (url) window.open(url, '_blank', 'noopener');
+    copy(code).then(function (ok) {
+      toast(ok ? (url ? 'Order code copied. Paste it at checkout.' : 'Order code copied.') : 'Select the code above and copy it.');
+    });
+    $('#next').hidden = false;
+  });
+
+  if (/[?&]selftest=1/.test(location.search)) {
+    var out = []; var allOk = true;
+    var check = function (name, cond) { out.push((cond ? 'ok   ' : 'FAIL ') + name); if (!cond) allOk = false; };
+    var uniq = function (a) { return a.filter(function (x, i) { return a.indexOf(x) === i; }).length === a.length; };
+    check('config has spots and packages', CFG.spots.length > 0 && CFG.packages.length > 0);
+    check('spot ids unique', uniq(CFG.spots.map(function (s) { return s.id; })));
+    TYPES.forEach(function (t) { AUDS.forEach(function (a) {
+      var r = recommend(t.id, a.id, 10);
+      check('recommend ' + t.id + '/' + a.id + ' gives ' + r.length, r.length === Math.min(10, MAX) && uniq(r));
+    }); });
+    var comp = recommend('talk', 'computing', 6);
+    check('computing talk includes a computing building', comp.some(function (id) { return (byId(CFG.spots, id).audiences || []).indexOf('computing') !== -1; }));
+    var res = recommend('society', 'residents', 5);
+    check('residents audience includes a residence', res.some(function (id) { return byId(CFG.spots, id).zone === 'living'; }));
+    check('order code names the package', orderCode().indexOf(pkg().name) !== -1);
+    check('summary rendered', $('#sum-list').children.length >= 5);
+    check('leaflet loaded', !!window.L);
+    check('one marker per spot', !window.L || Object.keys(markers).length === CFG.spots.length);
+    check('chips rendered', $$('#spots input').length === CFG.spots.length);
+    var pre = document.createElement('pre');
+    pre.id = 'selftest';
+    pre.textContent = (allOk ? 'SELFTEST PASS' : 'SELFTEST FAIL') + '\n' + out.join('\n');
+    document.body.appendChild(pre);
+  }
+})();
+</script>
+</body>
+</html>
