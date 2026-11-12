@@ -35,7 +35,18 @@ const ADMIN_KEY = (() => {
     return '';
   }
 })();
-const withKey = (path) => (ADMIN_KEY ? `${path}${path.includes('?') ? '&' : '?'}key=${encodeURIComponent(ADMIN_KEY)}` : path);
+// With an admin key, QR images are fetched with the key in a header and shown from memory,
+// so the key never appears in an image or download address.
+const qrBlobUrls = new Map(); // poster id -> blob: URL
+async function qrUrl(id) {
+  if (!ADMIN_KEY) return `/api/posters/${id}/qr.png`;
+  if (!qrBlobUrls.has(id)) {
+    const res = await fetch(`/api/posters/${id}/qr.png`, { headers: { Authorization: `Bearer ${ADMIN_KEY}` } });
+    if (!res.ok) throw new Error(`QR code failed to load (${res.status})`);
+    qrBlobUrls.set(id, URL.createObjectURL(await res.blob()));
+  }
+  return qrBlobUrls.get(id);
+}
 
 async function api(path, options = {}) {
   const headers = { 'Content-Type': 'application/json' };
@@ -283,15 +294,23 @@ function renderDetail() {
     </div>
     <h3>QR code</h3>
     <div class="qr">
-      <img src="${esc(withKey(`/api/posters/${p.id}/qr.png`))}" alt="QR code for ${esc(p.label)}" width="140" height="140">
+      <img id="qr-img" alt="QR code for ${esc(p.label)}" width="140" height="140">
       <div class="qr-info">
         <code>${esc(p.scan_url)}</code>
         <p class="meta">${p.target_url ? `Goes to ${esc(p.target_url)}` : 'No link set: shows a thank-you page.'}</p>
-        <a class="btn" href="${esc(withKey(`/api/posters/${p.id}/qr.png?download=1`))}">Download PNG</a>
+        <a class="btn" id="qr-dl" download="qr-${esc(p.code)}.png">Download PNG</a>
       </div>
     </div>
     <p class="note">Unique counts one phone per day. Opening the scan link in this browser also counts as a scan.</p>
     <button type="button" class="btn danger" id="delete">Delete poster</button>`;
+  qrUrl(p.id)
+    .then((src) => {
+      const img = $('#qr-img');
+      const dl = $('#qr-dl');
+      if (img) img.src = src;
+      if (dl) dl.href = ADMIN_KEY ? src : `/api/posters/${p.id}/qr.png?download=1`;
+    })
+    .catch((err) => console.warn(err.message));
   $('#back').addEventListener('click', showOverview);
   $('#delete').addEventListener('click', async () => {
     if (!confirm(`Delete "${p.label}" and all its scans?`)) return;

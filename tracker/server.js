@@ -46,11 +46,21 @@ let visitorSecret = '';
 // allowed. Anything that arrives over the network, or through a proxy or tunnel, must present
 // ADMIN_TOKEN. The scan link /p/<code> stays public, because that is what phones open.
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN ?? '';
+const TRUST_PROXY = process.env.TRUST_PROXY === '1';
 const sha = (s) => createHash('sha256').update(String(s)).digest();
 
+// Trusting "this machine" is only safe for a plain local run. Once the tracker has a public
+// address (PUBLIC_URL) or sits behind a proxy (TRUST_PROXY), a proxy or tunnel can make outside
+// requests look local, so local trust switches off and every API call needs ADMIN_TOKEN.
+// LOCAL_ADMIN=1 or LOCAL_ADMIN=0 overrides that default.
+const LOCAL_ADMIN = process.env.LOCAL_ADMIN ? process.env.LOCAL_ADMIN === '1' : !process.env.PUBLIC_URL && !TRUST_PROXY;
+const LOOPBACK_HOSTS = new Set([`localhost:${PORT}`, `127.0.0.1:${PORT}`, `[::1]:${PORT}`]);
+
 function isLocal(req) {
+  if (!LOCAL_ADMIN) return false;
   const h = req.headers;
   if (h['x-forwarded-for'] || h.forwarded || h['x-real-ip'] || h['cf-connecting-ip']) return false;
+  if (!LOOPBACK_HOSTS.has(h.host ?? '')) return false; // the browser must have asked for localhost itself
   const addr = req.socket.remoteAddress ?? '';
   return addr === '127.0.0.1' || addr === '::1' || addr === '::ffff:127.0.0.1';
 }
@@ -76,11 +86,13 @@ function sameSite(req) {
   return true;
 }
 
-function isAdmin(req, url) {
+// The key is only accepted in the Authorization header, never in an address, so it cannot end
+// up in browser history, logs or shared links.
+function isAdmin(req) {
   if (isLocal(req)) return true;
   if (!ADMIN_TOKEN) return false;
   const header = req.headers.authorization ?? '';
-  const given = header.startsWith('Bearer ') ? header.slice(7) : (url.searchParams.get('key') ?? '');
+  const given = header.startsWith('Bearer ') ? header.slice(7) : '';
   return given.length > 0 && timingSafeEqual(sha(given), sha(ADMIN_TOKEN));
 }
 
@@ -128,7 +140,6 @@ function deviceOf(ua = '') {
 
 // X-Forwarded-For can be set by anyone, so it is only believed behind a proxy we run
 // (TRUST_PROXY=1), and then only its last hop, which is the one that proxy added.
-const TRUST_PROXY = process.env.TRUST_PROXY === '1';
 function clientIp(req) {
   if (TRUST_PROXY) {
     const fwd = req.headers['x-forwarded-for'];
@@ -262,7 +273,7 @@ async function route(req, res) {
 
   if (pathname.startsWith('/api/')) {
     if (!sameSite(req)) return json(res, 403, { error: 'This request is not allowed from here.' });
-    if (!isAdmin(req, url)) return json(res, 401, { error: 'Open the dashboard on the laptop running the tracker, or use the admin key.' });
+    if (!isAdmin(req)) return json(res, 401, { error: 'Open the dashboard on the laptop running the tracker, or use the admin key.' });
   }
 
   if (pathname === '/api/config' && method === 'GET') {
@@ -353,4 +364,5 @@ http
     console.log(`QR tracker running`);
     console.log(`  Dashboard:  http://localhost:${PORT}`);
     console.log(`  QR codes point at ${BASE_URL}/p/<code> (phones must be on the same Wi-Fi)`);
+    if (!LOCAL_ADMIN && !ADMIN_TOKEN) console.log('  Dashboard is locked: start with ADMIN_TOKEN=<your key> to use it (see README).');
   });

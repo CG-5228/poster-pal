@@ -33,6 +33,8 @@ ADMIN_TOKEN=choose-a-long-random-key npm start
 # then open  https://your-address/#key=choose-a-long-random-key
 ```
 
-The key is kept for that browser session. It is also added to the QR image links, so do not share screenshots of those addresses.
+The key is kept for that browser session and is only ever sent in a request header, never in an address.
+
+If you give the tracker a public address (`PUBLIC_URL`) or run it behind a proxy (`TRUST_PROXY=1`), the laptop is no longer trusted automatically and the dashboard always needs `ADMIN_TOKEN`. `LOCAL_ADMIN=1` or `LOCAL_ADMIN=0` overrides that.
 
 No names or raw IP addresses are stored. Unique visitors are counted with a salted hash that changes every day.
