@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { networkInterfaces } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createHash, randomBytes } from 'node:crypto';
+import { createHash, randomBytes, timingSafeEqual } from 'node:crypto';
 import QRCode from 'qrcode';
 import { all, get, run, init } from './db.js';
 
@@ -40,6 +40,49 @@ const insideDcu = (lat, lng) =>
 
 const BASE_URL = (process.env.PUBLIC_URL ?? `http://${lanAddress()}:${PORT}`).replace(/\/$/, '');
 let visitorSecret = '';
+
+// ---------- access control ----------
+// The dashboard API (/api/*) is for the operator only. Requests made on this machine are
+// allowed. Anything that arrives over the network, or through a proxy or tunnel, must present
+// ADMIN_TOKEN. The scan link /p/<code> stays public, because that is what phones open.
+const ADMIN_TOKEN = process.env.ADMIN_TOKEN ?? '';
+const sha = (s) => createHash('sha256').update(String(s)).digest();
+
+function isLocal(req) {
+  const h = req.headers;
+  if (h['x-forwarded-for'] || h.forwarded || h['x-real-ip'] || h['cf-connecting-ip']) return false;
+  const addr = req.socket.remoteAddress ?? '';
+  return addr === '127.0.0.1' || addr === '::1' || addr === '::ffff:127.0.0.1';
+}
+
+// A website open in the operator's browser could try to call http://localhost behind their back.
+// So API calls must be addressed to a host we actually serve, must come from our own pages when
+// the browser says where they come from, and writes must be JSON, which another site cannot send
+// without permission that this server never gives.
+const ALLOWED_HOSTS = new Set([`localhost:${PORT}`, `127.0.0.1:${PORT}`, `[::1]:${PORT}`, `${lanAddress()}:${PORT}`, new URL(BASE_URL).host]);
+
+function sameSite(req) {
+  const host = req.headers.host ?? '';
+  if (!ALLOWED_HOSTS.has(host)) return false;
+  const origin = req.headers.origin;
+  if (origin) {
+    try {
+      if (new URL(origin).host !== host) return false;
+    } catch {
+      return false;
+    }
+  }
+  if (req.method !== 'GET' && req.method !== 'HEAD' && !/^application\/json\b/i.test(req.headers['content-type'] ?? '')) return false;
+  return true;
+}
+
+function isAdmin(req, url) {
+  if (isLocal(req)) return true;
+  if (!ADMIN_TOKEN) return false;
+  const header = req.headers.authorization ?? '';
+  const given = header.startsWith('Bearer ') ? header.slice(7) : (url.searchParams.get('key') ?? '');
+  return given.length > 0 && timingSafeEqual(sha(given), sha(ADMIN_TOKEN));
+}
 
 // ---------- helpers ----------
 
@@ -83,9 +126,14 @@ function deviceOf(ua = '') {
   return 'Other';
 }
 
+// X-Forwarded-For can be set by anyone, so it is only believed behind a proxy we run
+// (TRUST_PROXY=1), and then only its last hop, which is the one that proxy added.
+const TRUST_PROXY = process.env.TRUST_PROXY === '1';
 function clientIp(req) {
-  const fwd = req.headers['x-forwarded-for'];
-  if (typeof fwd === 'string' && fwd) return fwd.split(',')[0].trim();
+  if (TRUST_PROXY) {
+    const fwd = req.headers['x-forwarded-for'];
+    if (typeof fwd === 'string' && fwd) return fwd.split(',').pop().trim();
+  }
   return req.socket.remoteAddress ?? '';
 }
 
@@ -210,6 +258,11 @@ async function route(req, res) {
 
   if ((m = pathname.match(/^\/p\/([a-z0-9]{1,32})\/?$/)) && (method === 'GET' || method === 'HEAD')) {
     return handleScan(req, res, m[1]);
+  }
+
+  if (pathname.startsWith('/api/')) {
+    if (!sameSite(req)) return json(res, 403, { error: 'This request is not allowed from here.' });
+    if (!isAdmin(req, url)) return json(res, 401, { error: 'Open the dashboard on the laptop running the tracker, or use the admin key.' });
   }
 
   if (pathname === '/api/config' && method === 'GET') {

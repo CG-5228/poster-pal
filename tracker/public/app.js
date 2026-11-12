@@ -21,8 +21,26 @@ function esc(s) {
   return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 }
 
+// Admin key, only needed when the dashboard is opened from another device:
+// open it once as https://your-address/#key=YOUR_ADMIN_TOKEN and it is remembered for the session.
+const ADMIN_KEY = (() => {
+  try {
+    const m = /[#&]key=([^&]+)/.exec(location.hash);
+    if (m) {
+      sessionStorage.setItem('pp_admin_key', decodeURIComponent(m[1]));
+      history.replaceState(null, '', location.pathname + location.search);
+    }
+    return sessionStorage.getItem('pp_admin_key') || '';
+  } catch {
+    return '';
+  }
+})();
+const withKey = (path) => (ADMIN_KEY ? `${path}${path.includes('?') ? '&' : '?'}key=${encodeURIComponent(ADMIN_KEY)}` : path);
+
 async function api(path, options = {}) {
-  const res = await fetch(path, { headers: { 'Content-Type': 'application/json' }, ...options });
+  const headers = { 'Content-Type': 'application/json' };
+  if (ADMIN_KEY) headers.Authorization = `Bearer ${ADMIN_KEY}`;
+  const res = await fetch(path, { headers, ...options });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
   return data;
@@ -265,11 +283,11 @@ function renderDetail() {
     </div>
     <h3>QR code</h3>
     <div class="qr">
-      <img src="/api/posters/${p.id}/qr.png" alt="QR code for ${esc(p.label)}" width="140" height="140">
+      <img src="${esc(withKey(`/api/posters/${p.id}/qr.png`))}" alt="QR code for ${esc(p.label)}" width="140" height="140">
       <div class="qr-info">
         <code>${esc(p.scan_url)}</code>
         <p class="meta">${p.target_url ? `Goes to ${esc(p.target_url)}` : 'No link set: shows a thank-you page.'}</p>
-        <a class="btn" href="/api/posters/${p.id}/qr.png?download=1">Download PNG</a>
+        <a class="btn" href="${esc(withKey(`/api/posters/${p.id}/qr.png?download=1`))}">Download PNG</a>
       </div>
     </div>
     <p class="note">Unique counts one phone per day. Opening the scan link in this browser also counts as a scan.</p>

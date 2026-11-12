@@ -22,8 +22,17 @@ The dashboard opens at http://localhost:4317. QR codes point at this laptop's Wi
 
 Data is stored in `tracker/data/tracker.db` (not committed). Set `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` to use a hosted database.
 
-## Before putting it on the public internet
+## Who can use the dashboard
 
-The API has no login: anyone who can reach the server can add or delete posters. Add an admin key before hosting it publicly.
+The dashboard's data (`/api/*`) only answers requests made on the laptop running the tracker. Other devices on the network, and anything arriving through a proxy or tunnel, get a 401. The scan link `/p/<code>` stays public, because that is what phones open.
+
+To use the dashboard from another device, start the tracker with an admin key and open the dashboard once with that key in the address:
+
+```bash
+ADMIN_TOKEN=choose-a-long-random-key npm start
+# then open  https://your-address/#key=choose-a-long-random-key
+```
+
+The key is kept for that browser session. It is also added to the QR image links, so do not share screenshots of those addresses.
 
 No names or raw IP addresses are stored. Unique visitors are counted with a salted hash that changes every day.
